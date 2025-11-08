@@ -10,7 +10,7 @@ export default function Home() {
   const selectedColumn = useStore((s) => s.selectedColumn);
 
   // when inspector is open on wide screens, add right padding to avoid overlap
-  const containerClasses = `container mx-auto px-4 py-8 ${selectedColumn ? 'md:pr-96' : ''}`;
+  const containerClasses = `container mx-auto px-4 py-8 ${selectedColumn ? 'sm:pr-96 lg:pr-0' : ''}`;
 
   return (
     <main className="min-h-screen bg-white">

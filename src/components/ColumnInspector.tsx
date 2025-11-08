@@ -96,7 +96,13 @@ export const ColumnInspector: React.FC = () => {
       <div className="mt-3">
         {chart && (
           // @ts-ignore - Plot's types are heavy; runtime import is used.
-          <Plot data={chart.data} layout={chart.layout} config={{ responsive: true, displayModeBar: false }} />
+          <Plot
+            data={chart.data}
+            layout={{ ...chart.layout, autosize: true }}
+            useResizeHandler={true}
+            style={{ width: '100%', height: '320px' }}
+            config={{ responsive: true, displayModeBar: false }}
+          />
         )}
       </div>
 
