@@ -1,0 +1,34 @@
+{
+  "name": "cleanpilot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.21",
+    "next": "^16.0.1",
+    "papaparse": "^5.5.3",
+    "plotly.js-dist-min": "^3.2.0",
+    "postcss": "^8.5.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-plotly.js": "^2.6.0",
+    "tailwindcss": "^4.1.17",
+    "xlsx": "^0.18.5",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.0",
+    "@types/papaparse": "^5.5.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/react-plotly.js": "^2.6.3",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.1",
+    "typescript": "^5.9.3"
+  }
+}
