@@ -8,7 +8,7 @@ import { imputeMissing, normalizeColumn, dedupeByColumn } from '@/lib/transforma
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 export const ColumnInspector: React.FC = () => {
-  const { dataset, selectedColumn, setDataset, addPipelineStep, setSelectedColumn } = useStore();
+  const { dataset, selectedColumn, commitTransformation, setSelectedColumn } = useStore();
 
   const profile = selectedColumn ? dataset?.profiles[selectedColumn] : null;
 
@@ -44,20 +44,17 @@ export const ColumnInspector: React.FC = () => {
   const doImpute = () => {
     const custom = imputeStrategy === 'value' ? customImputeValue : undefined;
     const { dataset: newDs, step } = imputeMissing(dataset, selectedColumn, imputeStrategy, custom);
-    setDataset(newDs);
-    addPipelineStep(step);
+    commitTransformation(newDs, step);
   };
 
   const doNormalize = () => {
     const { dataset: newDs, step } = normalizeColumn(dataset, selectedColumn, normalizeMethod);
-    setDataset(newDs);
-    addPipelineStep(step);
+    commitTransformation(newDs, step);
   };
 
   const doDedupe = () => {
     const { dataset: newDs, step } = dedupeByColumn(dataset, selectedColumn);
-    setDataset(newDs);
-    addPipelineStep(step);
+    commitTransformation(newDs, step);
   };
 
   return (

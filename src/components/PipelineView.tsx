@@ -2,7 +2,7 @@ import { useStore } from '@/state/store';
 import { TransformationType } from '@/lib/types';
 
 export const PipelineView: React.FC = () => {
-  const { pipeline, removePipelineStep } = useStore();
+  const { pipeline, removePipelineStep, undo, redo, pastDatasets, futureDatasets } = useStore();
 
   const getTransformationLabel = (type: TransformationType): string => {
     switch (type) {
@@ -26,7 +26,13 @@ export const PipelineView: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-medium text-gray-900">Transformation Pipeline</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-medium text-gray-900">Transformation Pipeline</h2>
+        <div className="flex gap-2">
+          <button onClick={undo} disabled={!pastDatasets || pastDatasets.length === 0} className="px-3 py-1 bg-gray-100 rounded disabled:opacity-40">Undo</button>
+          <button onClick={redo} disabled={!futureDatasets || futureDatasets.length === 0} className="px-3 py-1 bg-gray-100 rounded disabled:opacity-40">Redo</button>
+        </div>
+      </div>
       <div className="space-y-2">
         {pipeline.map((step) => (
           <div

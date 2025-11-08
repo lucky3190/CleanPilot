@@ -1,9 +1,381 @@
 (globalThis.TURBOPACK || (globalThis.TURBOPACK = [])).push([typeof document === "object" ? document.currentScript : undefined,
-"[project]/src/state/store.ts [app-client] (ecmascript)", ((__turbopack_context__, module, exports) => {
+"[project]/src/lib/transformations.ts [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
 
-const e = new Error("Could not parse module '[project]/src/state/store.ts'\n\nExpected ';', got '{'");
-e.code = 'MODULE_UNPARSABLE';
-throw e;
+__turbopack_context__.s([
+    "dedupeByColumn",
+    ()=>dedupeByColumn,
+    "imputeMissing",
+    ()=>imputeMissing,
+    "normalizeColumn",
+    ()=>normalizeColumn
+]);
+// Minimal helpers for generating step ids
+const makeId = (prefix = 'step')=>`${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+function imputeMissing(dataset, column, strategy = 'auto', customValue) {
+    const data = dataset.data.map((r)=>({
+            ...r
+        }));
+    const values = data.map((r)=>r[column]);
+    const nonNull = values.filter((v)=>v !== undefined && v !== null && v !== '');
+    const isNumeric = nonNull.every((v)=>!isNaN(Number(v)));
+    let fillValue = null;
+    if (strategy === 'value') {
+        fillValue = customValue;
+    } else if (strategy === 'mean' || strategy === 'auto' && isNumeric) {
+        const nums = nonNull.map(Number);
+        fillValue = nums.reduce((a, b)=>a + b, 0) / (nums.length || 1);
+    } else if (strategy === 'median') {
+        const nums = nonNull.map(Number).filter((n)=>!isNaN(n)).sort((a, b)=>a - b);
+        const mid = Math.floor(nums.length / 2);
+        fillValue = nums.length ? nums.length % 2 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2 : null;
+    } else {
+        // mode or categorical fallback
+        const counts = nonNull.reduce((acc, v)=>{
+            const k = String(v);
+            acc[k] = (acc[k] || 0) + 1;
+            return acc;
+        }, {});
+        fillValue = Object.keys(counts).sort((a, b)=>counts[b] - counts[a])[0] ?? null;
+    }
+    data.forEach((row)=>{
+        if (row[column] === undefined || row[column] === null || row[column] === '') {
+            row[column] = fillValue;
+        }
+    });
+    const step = {
+        id: makeId('impute'),
+        type: 'impute',
+        column,
+        params: {
+            strategy,
+            value: fillValue
+        },
+        timestamp: Date.now()
+    };
+    const newDataset = {
+        ...dataset,
+        data
+    };
+    return {
+        dataset: newDataset,
+        step
+    };
+}
+function normalizeColumn(dataset, column, method = 'min-max') {
+    const data = dataset.data.map((r)=>({
+            ...r
+        }));
+    const nums = data.map((r)=>Number(r[column])).filter((v)=>!isNaN(v));
+    if (method === 'min-max') {
+        const min = Math.min(...nums);
+        const max = Math.max(...nums);
+        const range = max - min || 1;
+        data.forEach((row)=>{
+            const v = Number(row[column]);
+            if (!isNaN(v)) row[column] = (v - min) / range;
+        });
+        const step = {
+            id: makeId('normalize'),
+            type: 'normalize',
+            column,
+            params: {
+                method: 'min-max',
+                min: Math.min(...nums),
+                max: Math.max(...nums)
+            },
+            timestamp: Date.now()
+        };
+        return {
+            dataset: {
+                ...dataset,
+                data
+            },
+            step
+        };
+    }
+    // z-score
+    const mean = nums.reduce((a, b)=>a + b, 0) / (nums.length || 1);
+    const std = Math.sqrt(nums.reduce((a, b)=>a + Math.pow(b - mean, 2), 0) / (nums.length || 1)) || 1;
+    data.forEach((row)=>{
+        const v = Number(row[column]);
+        if (!isNaN(v)) row[column] = (v - mean) / std;
+    });
+    const step = {
+        id: makeId('normalize'),
+        type: 'normalize',
+        column,
+        params: {
+            method: 'zscore',
+            mean,
+            std
+        },
+        timestamp: Date.now()
+    };
+    return {
+        dataset: {
+            ...dataset,
+            data
+        },
+        step
+    };
+}
+function dedupeByColumn(dataset, column) {
+    const seen = new Set();
+    const data = [];
+    dataset.data.forEach((row)=>{
+        const key = String(row[column]);
+        if (!seen.has(key)) {
+            seen.add(key);
+            data.push({
+                ...row
+            });
+        }
+    });
+    const step = {
+        id: makeId('dedupe'),
+        type: 'deduplicate',
+        column,
+        params: {
+            kept: data.length
+        },
+        timestamp: Date.now()
+    };
+    return {
+        dataset: {
+            ...dataset,
+            data
+        },
+        step
+    };
+}
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
+}
+}),
+"[project]/src/state/store.ts [app-client] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "useStore",
+    ()=>useStore
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/zustand/esm/react.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/transformations.ts [app-client] (ecmascript)");
+;
+;
+const initialState = {
+    dataset: null,
+    pipeline: [],
+    selectedColumn: null,
+    loading: false,
+    error: null
+};
+const useStore = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$zustand$2f$esm$2f$react$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["create"])((set, get)=>({
+        ...initialState,
+        originalDataset: null,
+        pastDatasets: [],
+        futureDatasets: [],
+        futurePipelineSteps: [],
+        setDataset: (dataset)=>set(()=>({
+                    dataset,
+                    originalDataset: dataset,
+                    pipeline: [],
+                    pastDatasets: [],
+                    futureDatasets: [],
+                    futurePipelineSteps: []
+                })),
+        addPipelineStep: (step)=>set((state)=>({
+                    pipeline: [
+                        ...state.pipeline,
+                        step
+                    ]
+                })),
+        removePipelineStep: (stepId)=>set((state)=>{
+                const newPipeline = state.pipeline.filter((step)=>step.id !== stepId);
+                // replay pipeline starting from originalDataset
+                const orig = state.originalDataset ?? state.dataset;
+                if (!orig) {
+                    return {
+                        pipeline: newPipeline
+                    };
+                }
+                let replayed = orig;
+                try {
+                    for (const step of newPipeline){
+                        switch(step.type){
+                            case 'impute':
+                                replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["imputeMissing"])(replayed, step.column, step.params?.strategy ?? 'auto', step.params?.value).dataset;
+                                break;
+                            case 'normalize':
+                                replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizeColumn"])(replayed, step.column, step.params?.method ?? 'min-max').dataset;
+                                break;
+                            case 'deduplicate':
+                                replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["dedupeByColumn"])(replayed, step.column).dataset;
+                                break;
+                            default:
+                                console.warn('Unknown step type during replay', step.type);
+                                break;
+                        }
+                    }
+                } catch (e) {
+                    console.error('Failed to replay pipeline after removal', e);
+                }
+                return {
+                    pipeline: newPipeline,
+                    dataset: replayed,
+                    // reset history because we've changed the pipeline structure
+                    pastDatasets: [],
+                    futureDatasets: [],
+                    futurePipelineSteps: []
+                };
+            }),
+        setSelectedColumn: (columnName)=>set({
+                selectedColumn: columnName
+            }),
+        setLoading: (loading)=>set({
+                loading
+            }),
+        setError: (error)=>set({
+                error
+            }),
+        resetState: ()=>set({
+                ...initialState,
+                originalDataset: null,
+                pastDatasets: [],
+                futureDatasets: [],
+                futurePipelineSteps: []
+            }),
+        commitTransformation: (newDataset, step)=>set((state)=>({
+                    pastDatasets: [
+                        ...state.pastDatasets,
+                        state.dataset
+                    ],
+                    futureDatasets: [],
+                    futurePipelineSteps: [],
+                    dataset: newDataset,
+                    pipeline: [
+                        ...state.pipeline,
+                        step
+                    ]
+                })),
+        applyStep: (step)=>{
+            const state = get();
+            const ds = state.dataset;
+            if (!ds) return;
+            let result = null;
+            try {
+                switch(step.type){
+                    case 'impute':
+                        result = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["imputeMissing"])(ds, step.column, step.params?.strategy ?? 'auto', step.params?.value);
+                        break;
+                    case 'normalize':
+                        result = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizeColumn"])(ds, step.column, step.params?.method ?? 'min-max');
+                        break;
+                    case 'deduplicate':
+                        result = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["dedupeByColumn"])(ds, step.column);
+                        break;
+                    default:
+                        console.warn('Unknown step type', step.type);
+                        break;
+                }
+            } catch (e) {
+                console.error('Failed to apply step', e);
+            }
+            if (result) {
+                set((s)=>({
+                        pastDatasets: [
+                            ...s.pastDatasets,
+                            s.dataset
+                        ],
+                        futureDatasets: [],
+                        futurePipelineSteps: [],
+                        dataset: result.dataset,
+                        pipeline: [
+                            ...s.pipeline,
+                            step
+                        ]
+                    }));
+            }
+        },
+        replayPipeline: (pipeline)=>{
+            const state = get();
+            const orig = state.originalDataset ?? state.dataset;
+            const toReplay = pipeline ?? state.pipeline;
+            if (!orig) return null;
+            let replayed = orig;
+            try {
+                for (const step of toReplay){
+                    switch(step.type){
+                        case 'impute':
+                            replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["imputeMissing"])(replayed, step.column, step.params?.strategy ?? 'auto', step.params?.value).dataset;
+                            break;
+                        case 'normalize':
+                            replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizeColumn"])(replayed, step.column, step.params?.method ?? 'min-max').dataset;
+                            break;
+                        case 'deduplicate':
+                            replayed = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["dedupeByColumn"])(replayed, step.column).dataset;
+                            break;
+                        default:
+                            console.warn('Unknown step type during replay', step.type);
+                            break;
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to replay pipeline', e);
+            }
+            return replayed;
+        },
+        undo: ()=>set((state)=>{
+                if (!state.pastDatasets || state.pastDatasets.length === 0) return state;
+                const prev = state.pastDatasets[state.pastDatasets.length - 1];
+                const newPast = state.pastDatasets.slice(0, -1);
+                const removedStep = state.pipeline[state.pipeline.length - 1];
+                const newPipeline = state.pipeline.slice(0, -1);
+                return {
+                    dataset: prev,
+                    pipeline: newPipeline,
+                    pastDatasets: newPast,
+                    futureDatasets: [
+                        state.dataset,
+                        ...state.futureDatasets
+                    ],
+                    futurePipelineSteps: [
+                        removedStep,
+                        ...state.futurePipelineSteps
+                    ]
+                };
+            }),
+        redo: ()=>set((state)=>{
+                if (!state.futureDatasets || state.futureDatasets.length === 0) return state;
+                const next = state.futureDatasets[0];
+                const nextStep = state.futurePipelineSteps[0];
+                const newFutureDatasets = state.futureDatasets.slice(1);
+                const newFutureSteps = state.futurePipelineSteps.slice(1);
+                return {
+                    dataset: next,
+                    pipeline: nextStep ? [
+                        ...state.pipeline,
+                        nextStep
+                    ] : state.pipeline,
+                    pastDatasets: [
+                        ...state.pastDatasets,
+                        state.dataset
+                    ],
+                    futureDatasets: newFutureDatasets,
+                    futurePipelineSteps: newFutureSteps
+                };
+            }),
+        clearHistory: ()=>set({
+                pastDatasets: [],
+                futureDatasets: [],
+                futurePipelineSteps: [],
+                originalDataset: get().originalDataset
+            })
+    }));
+if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
+    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
+}
 }),
 "[project]/src/components/FileDropzone.tsx [app-client] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
@@ -443,7 +815,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 const PipelineView = ()=>{
     _s();
-    const { pipeline, removePipelineStep } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"])();
+    const { pipeline, removePipelineStep, undo, redo, pastDatasets, futureDatasets } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"])();
     const getTransformationLabel = (type)=>{
         switch(type){
             case 'impute':
@@ -482,10 +854,48 @@ const PipelineView = ()=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "space-y-4",
         children: [
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                className: "text-lg font-medium text-gray-900",
-                children: "Transformation Pipeline"
-            }, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "flex items-center justify-between",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                        className: "text-lg font-medium text-gray-900",
+                        children: "Transformation Pipeline"
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/PipelineView.tsx",
+                        lineNumber: 30,
+                        columnNumber: 9
+                    }, ("TURBOPACK compile-time value", void 0)),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "flex gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: undo,
+                                disabled: !pastDatasets || pastDatasets.length === 0,
+                                className: "px-3 py-1 bg-gray-100 rounded disabled:opacity-40",
+                                children: "Undo"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/PipelineView.tsx",
+                                lineNumber: 32,
+                                columnNumber: 11
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                onClick: redo,
+                                disabled: !futureDatasets || futureDatasets.length === 0,
+                                className: "px-3 py-1 bg-gray-100 rounded disabled:opacity-40",
+                                children: "Redo"
+                            }, void 0, false, {
+                                fileName: "[project]/src/components/PipelineView.tsx",
+                                lineNumber: 33,
+                                columnNumber: 11
+                            }, ("TURBOPACK compile-time value", void 0))
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/PipelineView.tsx",
+                        lineNumber: 31,
+                        columnNumber: 9
+                    }, ("TURBOPACK compile-time value", void 0))
+                ]
+            }, void 0, true, {
                 fileName: "[project]/src/components/PipelineView.tsx",
                 lineNumber: 29,
                 columnNumber: 7
@@ -505,12 +915,12 @@ const PipelineView = ()=>{
                                             children: pipeline.indexOf(step) + 1
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/PipelineView.tsx",
-                                            lineNumber: 38,
+                                            lineNumber: 44,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/PipelineView.tsx",
-                                        lineNumber: 37,
+                                        lineNumber: 43,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -520,7 +930,7 @@ const PipelineView = ()=>{
                                                 children: getTransformationLabel(step.type)
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/PipelineView.tsx",
-                                                lineNumber: 41,
+                                                lineNumber: 47,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -531,19 +941,19 @@ const PipelineView = ()=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/PipelineView.tsx",
-                                                lineNumber: 44,
+                                                lineNumber: 50,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/PipelineView.tsx",
-                                        lineNumber: 40,
+                                        lineNumber: 46,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/PipelineView.tsx",
-                                lineNumber: 36,
+                                lineNumber: 42,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -552,18 +962,18 @@ const PipelineView = ()=>{
                                 children: "✕"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/PipelineView.tsx",
-                                lineNumber: 49,
+                                lineNumber: 55,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, step.id, true, {
                         fileName: "[project]/src/components/PipelineView.tsx",
-                        lineNumber: 32,
+                        lineNumber: 38,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0)))
             }, void 0, false, {
                 fileName: "[project]/src/components/PipelineView.tsx",
-                lineNumber: 30,
+                lineNumber: 36,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
@@ -573,7 +983,7 @@ const PipelineView = ()=>{
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(PipelineView, "G3+bKg9+wfRx2bOCT6A6duL3ilg=", false, function() {
+_s(PipelineView, "QctnvRiiCGWVlzv0qdu3yCnffR0=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"]
     ];
@@ -581,160 +991,6 @@ _s(PipelineView, "G3+bKg9+wfRx2bOCT6A6duL3ilg=", false, function() {
 _c = PipelineView;
 var _c;
 __turbopack_context__.k.register(_c, "PipelineView");
-if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
-    __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
-}
-}),
-"[project]/src/lib/transformations.ts [app-client] (ecmascript)", ((__turbopack_context__) => {
-"use strict";
-
-__turbopack_context__.s([
-    "dedupeByColumn",
-    ()=>dedupeByColumn,
-    "imputeMissing",
-    ()=>imputeMissing,
-    "normalizeColumn",
-    ()=>normalizeColumn
-]);
-// Minimal helpers for generating step ids
-const makeId = (prefix = 'step')=>`${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-function imputeMissing(dataset, column, strategy = 'auto', customValue) {
-    const data = dataset.data.map((r)=>({
-            ...r
-        }));
-    const values = data.map((r)=>r[column]);
-    const nonNull = values.filter((v)=>v !== undefined && v !== null && v !== '');
-    const isNumeric = nonNull.every((v)=>!isNaN(Number(v)));
-    let fillValue = null;
-    if (strategy === 'value') {
-        fillValue = customValue;
-    } else if (strategy === 'mean' || strategy === 'auto' && isNumeric) {
-        const nums = nonNull.map(Number);
-        fillValue = nums.reduce((a, b)=>a + b, 0) / (nums.length || 1);
-    } else if (strategy === 'median') {
-        const nums = nonNull.map(Number).filter((n)=>!isNaN(n)).sort((a, b)=>a - b);
-        const mid = Math.floor(nums.length / 2);
-        fillValue = nums.length ? nums.length % 2 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2 : null;
-    } else {
-        // mode or categorical fallback
-        const counts = nonNull.reduce((acc, v)=>{
-            const k = String(v);
-            acc[k] = (acc[k] || 0) + 1;
-            return acc;
-        }, {});
-        fillValue = Object.keys(counts).sort((a, b)=>counts[b] - counts[a])[0] ?? null;
-    }
-    data.forEach((row)=>{
-        if (row[column] === undefined || row[column] === null || row[column] === '') {
-            row[column] = fillValue;
-        }
-    });
-    const step = {
-        id: makeId('impute'),
-        type: 'impute',
-        column,
-        params: {
-            strategy,
-            value: fillValue
-        },
-        timestamp: Date.now()
-    };
-    const newDataset = {
-        ...dataset,
-        data
-    };
-    return {
-        dataset: newDataset,
-        step
-    };
-}
-function normalizeColumn(dataset, column, method = 'min-max') {
-    const data = dataset.data.map((r)=>({
-            ...r
-        }));
-    const nums = data.map((r)=>Number(r[column])).filter((v)=>!isNaN(v));
-    if (method === 'min-max') {
-        const min = Math.min(...nums);
-        const max = Math.max(...nums);
-        const range = max - min || 1;
-        data.forEach((row)=>{
-            const v = Number(row[column]);
-            if (!isNaN(v)) row[column] = (v - min) / range;
-        });
-        const step = {
-            id: makeId('normalize'),
-            type: 'normalize',
-            column,
-            params: {
-                method: 'min-max',
-                min: Math.min(...nums),
-                max: Math.max(...nums)
-            },
-            timestamp: Date.now()
-        };
-        return {
-            dataset: {
-                ...dataset,
-                data
-            },
-            step
-        };
-    }
-    // z-score
-    const mean = nums.reduce((a, b)=>a + b, 0) / (nums.length || 1);
-    const std = Math.sqrt(nums.reduce((a, b)=>a + Math.pow(b - mean, 2), 0) / (nums.length || 1)) || 1;
-    data.forEach((row)=>{
-        const v = Number(row[column]);
-        if (!isNaN(v)) row[column] = (v - mean) / std;
-    });
-    const step = {
-        id: makeId('normalize'),
-        type: 'normalize',
-        column,
-        params: {
-            method: 'zscore',
-            mean,
-            std
-        },
-        timestamp: Date.now()
-    };
-    return {
-        dataset: {
-            ...dataset,
-            data
-        },
-        step
-    };
-}
-function dedupeByColumn(dataset, column) {
-    const seen = new Set();
-    const data = [];
-    dataset.data.forEach((row)=>{
-        const key = String(row[column]);
-        if (!seen.has(key)) {
-            seen.add(key);
-            data.push({
-                ...row
-            });
-        }
-    });
-    const step = {
-        id: makeId('dedupe'),
-        type: 'deduplicate',
-        column,
-        params: {
-            kept: data.length
-        },
-        timestamp: Date.now()
-    };
-    return {
-        dataset: {
-            ...dataset,
-            data
-        },
-        step
-    };
-}
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);
 }
@@ -772,7 +1028,7 @@ const Plot = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f
 _c = Plot;
 const ColumnInspector = ()=>{
     _s();
-    const { dataset, selectedColumn, setDataset, addPipelineStep, setSelectedColumn } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"])();
+    const { dataset, selectedColumn, commitTransformation, setSelectedColumn } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"])();
     const profile = selectedColumn ? dataset?.profiles[selectedColumn] : null;
     // Local UI params for transformations
     const [imputeStrategy, setImputeStrategy] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('auto');
@@ -843,18 +1099,15 @@ const ColumnInspector = ()=>{
     const doImpute = ()=>{
         const custom = imputeStrategy === 'value' ? customImputeValue : undefined;
         const { dataset: newDs, step } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["imputeMissing"])(dataset, selectedColumn, imputeStrategy, custom);
-        setDataset(newDs);
-        addPipelineStep(step);
+        commitTransformation(newDs, step);
     };
     const doNormalize = ()=>{
         const { dataset: newDs, step } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["normalizeColumn"])(dataset, selectedColumn, normalizeMethod);
-        setDataset(newDs);
-        addPipelineStep(step);
+        commitTransformation(newDs, step);
     };
     const doDedupe = ()=>{
         const { dataset: newDs, step } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["dedupeByColumn"])(dataset, selectedColumn);
-        setDataset(newDs);
-        addPipelineStep(step);
+        commitTransformation(newDs, step);
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
         className: "fixed right-6 top-24 w-96 bg-white border rounded-lg shadow-lg p-4 z-50",
@@ -869,7 +1122,7 @@ const ColumnInspector = ()=>{
                                 children: selectedColumn
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 67,
+                                lineNumber: 64,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -880,13 +1133,13 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 68,
+                                lineNumber: 65,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 66,
+                        lineNumber: 63,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -896,13 +1149,13 @@ const ColumnInspector = ()=>{
                         children: "✕"
                     }, void 0, false, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 70,
+                        lineNumber: 67,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 65,
+                lineNumber: 62,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -917,12 +1170,12 @@ const ColumnInspector = ()=>{
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/components/ColumnInspector.tsx",
-                    lineNumber: 82,
+                    lineNumber: 79,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 79,
+                lineNumber: 76,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -938,7 +1191,7 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 88,
+                                lineNumber: 85,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -948,7 +1201,7 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 89,
+                                lineNumber: 86,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -958,13 +1211,13 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 90,
+                                lineNumber: 87,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 87,
+                        lineNumber: 84,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -975,7 +1228,7 @@ const ColumnInspector = ()=>{
                                 children: "Imputation strategy"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 94,
+                                lineNumber: 91,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -991,7 +1244,7 @@ const ColumnInspector = ()=>{
                                                 children: "Auto"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 101,
+                                                lineNumber: 98,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -999,7 +1252,7 @@ const ColumnInspector = ()=>{
                                                 children: "Mean"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 102,
+                                                lineNumber: 99,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1007,7 +1260,7 @@ const ColumnInspector = ()=>{
                                                 children: "Median"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 103,
+                                                lineNumber: 100,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1015,7 +1268,7 @@ const ColumnInspector = ()=>{
                                                 children: "Mode"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 104,
+                                                lineNumber: 101,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1023,13 +1276,13 @@ const ColumnInspector = ()=>{
                                                 children: "Custom value"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 105,
+                                                lineNumber: 102,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 96,
+                                        lineNumber: 93,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     imputeStrategy === 'value' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1039,7 +1292,7 @@ const ColumnInspector = ()=>{
                                         className: "w-28 rounded border px-2 py-1"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 108,
+                                        lineNumber: 105,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1048,13 +1301,13 @@ const ColumnInspector = ()=>{
                                         children: "Apply"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 115,
+                                        lineNumber: 112,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 95,
+                                lineNumber: 92,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             profile.type === 'numeric' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1065,7 +1318,7 @@ const ColumnInspector = ()=>{
                                         children: "Normalize"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 117,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1081,7 +1334,7 @@ const ColumnInspector = ()=>{
                                                         children: "Min-Max"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 123,
+                                                        lineNumber: 120,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1089,13 +1342,13 @@ const ColumnInspector = ()=>{
                                                         children: "Z-score"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 124,
+                                                        lineNumber: 121,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 122,
+                                                lineNumber: 119,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1104,19 +1357,19 @@ const ColumnInspector = ()=>{
                                                 children: "Apply"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 126,
+                                                lineNumber: 123,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 121,
+                                        lineNumber: 118,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 119,
+                                lineNumber: 116,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1127,34 +1380,34 @@ const ColumnInspector = ()=>{
                                     children: "Remove duplicates"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/ColumnInspector.tsx",
-                                    lineNumber: 132,
+                                    lineNumber: 129,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 131,
+                                lineNumber: 128,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 93,
+                        lineNumber: 90,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 86,
+                lineNumber: 83,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/ColumnInspector.tsx",
-        lineNumber: 64,
+        lineNumber: 61,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };
-_s(ColumnInspector, "rNrifWUmskM2nPkTvsoHVnX3jIU=", false, function() {
+_s(ColumnInspector, "U2z3x4Il1yHdlFMEGHjzKcw8dUY=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$state$2f$store$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useStore"]
     ];
@@ -1250,4 +1503,4 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 }),
 ]);
 
-//# sourceMappingURL=src_35c93f7e._.js.map
+//# sourceMappingURL=src_a8cb1878._.js.map

@@ -8,3 +8,33 @@
 [00:49:46.669] Server  LOG      ✓ Compiled in 45ms
 [00:50:30.159] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
 [00:53:28.743] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:57:11.591] Server  LOG      ✓ Compiled in 33ms
+[00:57:11.695] Browser ERROR   ./src/state/store.ts:8:10
+Parsing ecmascript source code failed
+   6 |   addPipelineStep: (step: PipelineStep) => void;
+   7 |   removePipelineStep: (stepId: string) => void;
+>  8 |   import { create } from 'zustand';
+     |          ^
+   9 |   import { AppState, Dataset, PipelineStep } from '@/lib/types';
+  10 |   import { imputeMissing, normalizeColumn, dedupeByColumn } from '@/lib/transformations';
+  11 |
+
+Expected ';', got '{'
+
+Import traces:
+  Client Component Browser:
+    ./src/state/store.ts [Client Component Browser]
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/state/store.ts [Client Component SSR]
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[00:58:25.994] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:59:00.418] Server  LOG      ✓ Compiled in 19ms
+[00:59:41.205] Server  LOG      ✓ Compiled in 24ms
+[01:01:39.032] Server  LOG      ✓ Compiled in 22ms
+[01:02:24.832] Server  LOG      ✓ Compiled in 26ms
