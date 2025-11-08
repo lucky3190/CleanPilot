@@ -122,3 +122,54 @@ export function dedupeByColumn(dataset: Dataset, column: string) {
 
   return { dataset: { ...dataset, data }, step };
 }
+
+// Drop a whole column
+export function dropColumn(dataset: Dataset, column: string) {
+  const data = dataset.data.map(row => {
+    const copy = { ...row };
+    delete copy[column];
+    return copy;
+  });
+
+  const columns = dataset.columns.filter(c => c !== column);
+  const profiles = { ...dataset.profiles };
+  delete profiles[column];
+
+  const step: PipelineStep = {
+    id: makeId('drop'),
+    type: 'drop_column',
+    column,
+    params: {},
+    timestamp: Date.now(),
+  };
+
+  return { dataset: { ...dataset, data, columns, profiles }, step };
+}
+
+// Replace categorical values in a column (simple equality or case-insensitive)
+export function replaceValues(dataset: Dataset, column: string, fromValue: any, toValue: any, options?: { ignoreCase?: boolean }) {
+  const { ignoreCase } = { ignoreCase: false, ...(options || {}) };
+  const data = dataset.data.map(row => {
+    const copy = { ...row };
+    const val = copy[column];
+    if (val !== undefined && val !== null) {
+      if (ignoreCase && typeof val === 'string' && typeof fromValue === 'string') {
+        if (val.toLowerCase() === fromValue.toLowerCase()) copy[column] = toValue;
+      } else {
+        if (val === fromValue) copy[column] = toValue;
+      }
+    }
+    return copy;
+  });
+
+  // update profile quick stats: cannot compute full stats here; leave to profiler later
+  const step: PipelineStep = {
+    id: makeId('replace'),
+    type: 'replace_values',
+    column,
+    params: { fromValue, toValue, ignoreCase },
+    timestamp: Date.now(),
+  };
+
+  return { dataset: { ...dataset, data }, step };
+}

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useMemo, useState } from 'react';
 import { useStore } from '@/state/store';
-import { imputeMissing, normalizeColumn, dedupeByColumn } from '@/lib/transformations';
+import { imputeMissing, normalizeColumn, dedupeByColumn, dropColumn, replaceValues } from '@/lib/transformations';
 
 const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
@@ -16,6 +16,9 @@ export const ColumnInspector: React.FC = () => {
   const [imputeStrategy, setImputeStrategy] = useState<'mean' | 'median' | 'mode' | 'value' | 'auto'>('auto');
   const [customImputeValue, setCustomImputeValue] = useState<string>('');
   const [normalizeMethod, setNormalizeMethod] = useState<'min-max' | 'zscore'>('min-max');
+  const [replaceFrom, setReplaceFrom] = useState<string>('');
+  const [replaceTo, setReplaceTo] = useState<string>('');
+  const [replaceIgnoreCase, setReplaceIgnoreCase] = useState<boolean>(true);
 
   const chart = useMemo(() => {
     if (!dataset || !selectedColumn || !profile) return null;
@@ -57,19 +60,36 @@ export const ColumnInspector: React.FC = () => {
     commitTransformation(newDs, step);
   };
 
+  const doReplace = () => {
+    if (!replaceFrom) return;
+    const { dataset: newDs, step } = replaceValues(dataset, selectedColumn, replaceFrom, replaceTo, { ignoreCase: replaceIgnoreCase });
+    commitTransformation(newDs, step);
+  };
+
+  const doDrop = () => {
+    const ok = window.confirm(`Drop column "${selectedColumn}"? This will remove the column from the dataset.`);
+    if (!ok) return;
+    const { dataset: newDs, step } = dropColumn(dataset, selectedColumn);
+    commitTransformation(newDs, step);
+  };
+
   return (
-    <aside className="fixed right-6 top-24 w-96 bg-white border rounded-lg shadow-lg p-4 z-50">
+    // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+    <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 sm:rounded-lg sm:shadow-lg sm:border">
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">{selectedColumn}</h3>
           <p className="text-sm text-gray-500">Type: {profile.type}</p>
         </div>
         <button
-          aria-label="close"
+          aria-label="close inspector"
           onClick={() => setSelectedColumn(null)}
-          className="text-gray-400 hover:text-gray-700"
+          className="text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 px-2 py-1"
         >
-          ✕
+          <span className="sr-only">Close inspector</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
         </button>
       </div>
 
@@ -125,8 +145,23 @@ export const ColumnInspector: React.FC = () => {
             </div>
           )}
 
-          <div className="mt-2">
-            <button onClick={doDedupe} className="w-full px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition">Remove duplicates</button>
+          <div className="mt-2 space-y-2">
+            <div className="grid grid-cols-1 gap-2">
+              <div className="text-xs text-gray-500">Find & replace (categorical)</div>
+              <div className="flex gap-2">
+                <input value={replaceFrom} onChange={(e) => setReplaceFrom(e.target.value)} placeholder="from" className="flex-1 rounded border px-2 py-1" />
+                <input value={replaceTo} onChange={(e) => setReplaceTo(e.target.value)} placeholder="to" className="flex-1 rounded border px-2 py-1" />
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-sm"><input type="checkbox" checked={replaceIgnoreCase} onChange={(e) => setReplaceIgnoreCase(e.target.checked)} className="mr-2" /> Ignore case</label>
+                <button onClick={doReplace} className="ml-auto px-3 py-1 bg-yellow-500 text-white rounded">Replace</button>
+              </div>
+            </div>
+
+            <div>
+              <button onClick={doDedupe} className="w-full mb-2 px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition">Remove duplicates</button>
+              <button onClick={doDrop} className="w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Drop column</button>
+            </div>
           </div>
         </div>
       </div>

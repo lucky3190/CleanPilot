@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { AppState, Dataset, PipelineStep } from '@/lib/types';
-import { imputeMissing, normalizeColumn, dedupeByColumn } from '@/lib/transformations';
+import { imputeMissing, normalizeColumn, dedupeByColumn, dropColumn, replaceValues } from '@/lib/transformations';
 
 interface StoreState extends AppState {
   // history stacks for undo/redo
@@ -51,41 +51,74 @@ export const useStore = create<StoreState>((set, get) => ({
 
   removePipelineStep: (stepId: string) =>
     set((state) => {
+      const prevDataset = state.dataset;
       const newPipeline = state.pipeline.filter((step) => step.id !== stepId);
-      // replay pipeline starting from originalDataset
       const orig = state.originalDataset ?? state.dataset;
       if (!orig) {
         return { pipeline: newPipeline } as any;
       }
-      let replayed = orig;
+
+      // build replay snapshots: start with original, then after each step
+      const snapshots: Dataset[] = [orig];
       try {
+        let current = orig;
         for (const step of newPipeline) {
           switch (step.type) {
             case 'impute':
-              replayed = imputeMissing(replayed, step.column, (step.params?.strategy as any) ?? 'auto', step.params?.value).dataset;
+              current = imputeMissing(current, step.column, (step.params?.strategy as any) ?? 'auto', step.params?.value).dataset;
               break;
             case 'normalize':
-              replayed = normalizeColumn(replayed, step.column, (step.params?.method as any) ?? 'min-max').dataset;
+              current = normalizeColumn(current, step.column, (step.params?.method as any) ?? 'min-max').dataset;
+              break;
+            case 'drop_column':
+              current = dropColumn(current, step.column).dataset;
+              break;
+            case 'replace_values':
+              current = replaceValues(current, step.column, step.params?.fromValue, step.params?.toValue, { ignoreCase: step.params?.ignoreCase }).dataset;
               break;
             case 'deduplicate':
-              replayed = dedupeByColumn(replayed, step.column).dataset;
+              current = dedupeByColumn(current, step.column).dataset;
               break;
             default:
               console.warn('Unknown step type during replay', step.type);
               break;
           }
+          snapshots.push(current);
         }
       } catch (e) {
         console.error('Failed to replay pipeline after removal', e);
       }
 
+      // try to preserve position in history by finding the index of previous dataset
+      const prevKey = prevDataset ? JSON.stringify(prevDataset.data) : null;
+      let idx = -1;
+      if (prevKey) {
+        for (let i = 0; i < snapshots.length; i++) {
+          try {
+            if (JSON.stringify(snapshots[i].data) === prevKey) {
+              idx = i;
+              break;
+            }
+          } catch (e) {
+            // ignore serialization errors
+          }
+        }
+      }
+
+      // if not found, default to the last snapshot (fully applied)
+      if (idx === -1) idx = snapshots.length - 1;
+
+      const newDataset = snapshots[idx];
+      const newPast = snapshots.slice(0, idx);
+      const newFuture = snapshots.slice(idx + 1);
+      const newFutureSteps = newPipeline.slice(idx);
+
       return {
         pipeline: newPipeline,
-        dataset: replayed,
-        // reset history because we've changed the pipeline structure
-        pastDatasets: [],
-        futureDatasets: [],
-        futurePipelineSteps: [],
+        dataset: newDataset,
+        pastDatasets: newPast,
+        futureDatasets: newFuture,
+        futurePipelineSteps: newFutureSteps,
       } as any;
     }),
 
@@ -123,6 +156,12 @@ export const useStore = create<StoreState>((set, get) => ({
         case 'deduplicate':
           result = dedupeByColumn(ds, step.column);
           break;
+        case 'drop_column':
+          result = dropColumn(ds, step.column);
+          break;
+        case 'replace_values':
+          result = replaceValues(ds, step.column, step.params?.fromValue, step.params?.toValue, { ignoreCase: step.params?.ignoreCase });
+          break;
         default:
           console.warn('Unknown step type', step.type);
           break;
@@ -156,6 +195,12 @@ export const useStore = create<StoreState>((set, get) => ({
             break;
           case 'normalize':
             replayed = normalizeColumn(replayed, step.column, (step.params?.method as any) ?? 'min-max').dataset;
+            break;
+          case 'drop_column':
+            replayed = dropColumn(replayed, step.column).dataset;
+            break;
+          case 'replace_values':
+            replayed = replaceValues(replayed, step.column, step.params?.fromValue, step.params?.toValue, { ignoreCase: step.params?.ignoreCase }).dataset;
             break;
           case 'deduplicate':
             replayed = dedupeByColumn(replayed, step.column).dataset;

@@ -22,6 +22,8 @@ export type TransformationType =
   | 'impute'
   | 'normalize'
   | 'deduplicate'
+  | 'drop_column'
+  | 'replace_values'
   | 'outlier_remove'
   | 'type_convert'
   | 'rename';
