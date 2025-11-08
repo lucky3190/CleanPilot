@@ -3,6 +3,7 @@
 import { FileDropzone } from '@/components/FileDropzone';
 import { ColumnGrid } from '@/components/ColumnGrid';
 import { PipelineView } from '@/components/PipelineView';
+import ColumnInspector from '@/components/ColumnInspector';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
           <FileDropzone />
           <ColumnGrid />
           <PipelineView />
+          <ColumnInspector />
         </div>
       </div>
     </main>
