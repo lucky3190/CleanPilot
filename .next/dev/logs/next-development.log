@@ -1,54 +1,139 @@
-[00:00:00.550] Server  LOG      ✓ Ready in 357ms
-[00:00:16.117] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:44:49.284] Server  LOG      ✓ Compiled in 37ms
-[00:45:09.225] Server  LOG      ✓ Compiled in 38ms
-[00:45:09.350] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:48:07.810] Server  LOG      ✓ Compiled in 29ms
-[00:49:16.089] Server  LOG      ✓ Compiled in 31ms
-[00:49:46.669] Server  LOG      ✓ Compiled in 45ms
-[00:50:30.159] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:53:28.743] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:57:11.591] Server  LOG      ✓ Compiled in 33ms
-[00:57:11.695] Browser ERROR   ./src/state/store.ts:8:10
+[00:00:01.364] Server  LOG      ✓ Ready in 1118ms
+[00:00:13.679] Server  LOG      ○ Compiling / ...
+[00:00:13.768] Server  ERROR    ⨯ ./src/components/ColumnInspector.tsx:78:5
 Parsing ecmascript source code failed
-   6 |   addPipelineStep: (step: PipelineStep) => void;
-   7 |   removePipelineStep: (stepId: string) => void;
->  8 |   import { create } from 'zustand';
-     |          ^
-   9 |   import { AppState, Dataset, PipelineStep } from '@/lib/types';
-  10 |   import { imputeMissing, normalizeColumn, dedupeByColumn } from '@/lib/transformations';
-  11 |
+  76 |   return (
+  77 |     // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+> 78 |     return (
+     |     ^^^^^^
+  79 |     <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-3/4 lg:max-w-6xl sm:rounded-lg sm:shadow-lg sm:border">
+  80 |       <div className="flex items-start justify-between">
+  81 |         <div>
 
-Expected ';', got '{'
+Expression expected
 
 Import traces:
   Client Component Browser:
-    ./src/state/store.ts [Client Component Browser]
     ./src/components/ColumnInspector.tsx [Client Component Browser]
     ./src/app/page.tsx [Client Component Browser]
     ./src/app/page.tsx [Server Component]
 
   Client Component SSR:
-    ./src/state/store.ts [Client Component SSR]
     ./src/components/ColumnInspector.tsx [Client Component SSR]
     ./src/app/page.tsx [Client Component SSR]
     ./src/app/page.tsx [Server Component]
-[00:58:25.994] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:59:00.418] Server  LOG      ✓ Compiled in 19ms
-[00:59:41.205] Server  LOG      ✓ Compiled in 24ms
-[01:01:39.032] Server  LOG      ✓ Compiled in 22ms
-[01:02:24.832] Server  LOG      ✓ Compiled in 26ms
-[01:05:33.319] Server  LOG      ✓ Compiled in 26ms
-[01:07:27.213] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[01:12:05.616] Server  LOG      ✓ Compiled in 21ms
-[01:13:26.254] Server  LOG      ✓ Compiled in 20ms
-[01:13:43.900] Server  LOG      ✓ Compiled in 20ms
-[01:13:56.602] Server  LOG      ✓ Compiled in 19ms
-[01:14:20.210] Server  LOG      ✓ Compiled in 29ms
-[01:14:45.136] Server  LOG      ✓ Compiled in 26ms
-[01:15:07.291] Server  LOG      ✓ Compiled in 22ms
-[01:19:15.467] Server  LOG      ✓ Compiled in 36ms
-[01:22:12.324] Server  LOG      ✓ Compiled in 27ms
-[01:22:22.270] Server  LOG      ✓ Compiled in 48ms
-[01:25:35.836] Server  LOG      ✓ Compiled in 28ms
-[01:27:09.662] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+
+[00:00:14.333] Browser ERROR   uncaughtError: Error: ./src/components/ColumnInspector.tsx:78:5
+Parsing ecmascript source code failed
+  76 |   return (
+  77 |     // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+> 78 |     return (
+     |     ^^^^^^
+  79 |     <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-3/4 lg:max-w-6xl sm:rounded-lg sm:shadow-lg sm:border">
+  80 |       <div className="flex items-start justify-between">
+  81 |         <div>
+
+Expression expected
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+[00:00:14.479] Browser ERROR   ./src/components/ColumnInspector.tsx:78:5
+Parsing ecmascript source code failed
+  76 |   return (
+  77 |     // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+> 78 |     return (
+     |     ^^^^^^
+  79 |     <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-3/4 lg:max-w-6xl sm:rounded-lg sm:shadow-lg sm:border">
+  80 |       <div className="flex items-start justify-between">
+  81 |         <div>
+
+Expression expected
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[00:00:14.896] Browser ERROR   ./src/components/ColumnInspector.tsx:78:5
+Parsing ecmascript source code failed
+  76 |   return (
+  77 |     // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+> 78 |     return (
+     |     ^^^^^^
+  79 |     <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-3/4 lg:max-w-6xl sm:rounded-lg sm:shadow-lg sm:border">
+  80 |       <div className="flex items-start justify-between">
+  81 |         <div>
+
+Expression expected
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[00:01:59.231] Browser ERROR   ./src/components/ColumnInspector.tsx:98:63
+Parsing ecmascript source code failed
+   96 |
+   97 |   return (
+>  98 |     // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
+      |                                                               ^
+   99 |     return (
+  100 |     <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 lg:inset-x-auto lg:left-1/2 lg:-translate-x-1/2 lg:w-3/4 lg:max-w-6xl sm:rounded-lg sm:shadow-lg sm:border">
+  101 |       <div className="flex items-start justify-between">
+
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[00:01:59.231] Browser ERROR   ./src/components/ColumnInspector.tsx:200:1
+Parsing ecmascript source code failed
+  198 |     </aside>
+  199 |   );
+> 200 | };
+      | ^
+  201 |
+  202 | export default ColumnInspector;
+  203 |
+
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+Import traces:
+  Client Component Browser:
+    ./src/components/ColumnInspector.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/ColumnInspector.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+[00:04:18.308] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold

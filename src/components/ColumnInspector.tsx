@@ -9,7 +9,6 @@ const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
 
 export const ColumnInspector: React.FC = () => {
   const { dataset, selectedColumn, commitTransformation, setSelectedColumn } = useStore();
-
   const profile = selectedColumn ? dataset?.profiles[selectedColumn] : null;
 
   // Local UI params for transformations
@@ -26,7 +25,14 @@ export const ColumnInspector: React.FC = () => {
     if (profile.type === 'numeric') {
       return {
         data: [{ type: 'histogram', x: dataset.data.map(d => Number(d[selectedColumn])), marker: { color: '#2563eb' } }],
-        layout: { title: selectedColumn, height: 320, margin: { t: 36 } }
+        layout: { 
+          title: selectedColumn,
+          margin: { t: 36, l: 40, r: 20, b: 40 },
+          paper_bgcolor: 'transparent',
+          plot_bgcolor: 'transparent',
+          showlegend: false,
+          autosize: true
+        }
       };
     }
 
@@ -37,8 +43,21 @@ export const ColumnInspector: React.FC = () => {
     });
 
     return {
-      data: [{ type: 'bar', x: Object.keys(counts), y: Object.values(counts), marker: { color: '#10b981' } }],
-      layout: { title: selectedColumn, height: 320, margin: { t: 36, b: 120 }, xaxis: { tickangle: -45 } }
+      data: [{ 
+        type: 'bar',
+        x: Object.keys(counts),
+        y: Object.values(counts),
+        marker: { color: '#10b981' }
+      }],
+      layout: {
+        title: selectedColumn,
+        margin: { t: 36, l: 40, r: 20, b: 120 },
+        xaxis: { tickangle: -45 },
+        paper_bgcolor: 'transparent',
+        plot_bgcolor: 'transparent',
+        showlegend: false,
+        autosize: true
+      }
     };
   }, [dataset, selectedColumn, profile]);
 
@@ -74,100 +93,145 @@ export const ColumnInspector: React.FC = () => {
   };
 
   return (
-    // Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
-    <aside className="fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 sm:rounded-lg sm:shadow-lg sm:border">
-      <div className="flex items-start justify-between">
+    <aside className="fixed bg-white shadow-2xl z-50 transition-all duration-200 ease-out
+                    inset-0 p-4 overflow-y-auto
+                    sm:inset-auto sm:top-24 sm:right-6 sm:w-96 sm:rounded-lg sm:shadow-lg sm:border
+                    lg:w-3/4 lg:max-w-6xl lg:left-1/2 lg:-translate-x-1/2">
+      <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">{selectedColumn}</h3>
           <p className="text-sm text-gray-500">Type: {profile.type}</p>
         </div>
         <button
-          aria-label="close inspector"
           onClick={() => setSelectedColumn(null)}
-          className="text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 px-2 py-1"
+          className="text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 p-1"
+          aria-label="Close inspector"
         >
-          <span className="sr-only">Close inspector</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         </button>
       </div>
 
-      <div className="mt-3">
-        {chart && (
-          // @ts-ignore - Plot's types are heavy; runtime import is used.
+      {chart && (
+        <div className="w-full h-[60vh] bg-white rounded-lg overflow-hidden mb-4">
+          {/* @ts-ignore - Plotly types are heavy; dynamic import handles it */}
           <Plot
             data={chart.data}
-            layout={{ ...chart.layout, autosize: true }}
+            layout={chart.layout}
             useResizeHandler={true}
-            style={{ width: '100%', height: '320px' }}
+            style={{ width: '100%', height: '100%' }}
             config={{ responsive: true, displayModeBar: false }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
-      <div className="mt-3 space-y-2">
-        <div className="text-sm text-gray-600">
+      <div className="space-y-4">
+        <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg grid grid-cols-3 gap-4">
           <div>Rows: {profile.stats.count}</div>
           <div>Nulls: {profile.stats.nullCount}</div>
           <div>Uniques: {profile.stats.uniqueCount}</div>
         </div>
 
-        <div className="mt-3 space-y-2">
-          <label className="block text-xs text-gray-500">Imputation strategy</label>
-          <div className="flex gap-2">
-            <select
-              value={imputeStrategy}
-              onChange={(e) => setImputeStrategy(e.target.value as any)}
-              className="flex-1 rounded border px-2 py-1"
-            >
-              <option value="auto">Auto</option>
-              <option value="mean">Mean</option>
-              <option value="median">Median</option>
-              <option value="mode">Mode</option>
-              <option value="value">Custom value</option>
-            </select>
-            {imputeStrategy === 'value' && (
-              <input
-                value={customImputeValue}
-                onChange={(e) => setCustomImputeValue(e.target.value)}
-                placeholder="value"
-                className="w-28 rounded border px-2 py-1"
-              />
-            )}
-            <button onClick={doImpute} className="px-3 py-1 bg-blue-600 text-white rounded">Apply</button>
+        <div className="space-y-4">
+          <div className="bg-white rounded-lg">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Imputation strategy</label>
+            <div className="flex gap-2">
+              <select
+                value={imputeStrategy}
+                onChange={(e) => setImputeStrategy(e.target.value as any)}
+                className="flex-1 rounded border px-2 py-1.5"
+              >
+                <option value="auto">Auto</option>
+                <option value="mean">Mean</option>
+                <option value="median">Median</option>
+                <option value="mode">Mode</option>
+                <option value="value">Custom value</option>
+              </select>
+              {imputeStrategy === 'value' && (
+                <input
+                  value={customImputeValue}
+                  onChange={(e) => setCustomImputeValue(e.target.value)}
+                  placeholder="value"
+                  className="w-28 rounded border px-2 py-1.5"
+                />
+              )}
+              <button onClick={doImpute} className="px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Apply
+              </button>
+            </div>
           </div>
 
           {profile.type === 'numeric' && (
-            <div className="mt-3">
-              <label className="block text-xs text-gray-500">Normalize</label>
-              <div className="flex gap-2 mt-1">
-                <select value={normalizeMethod} onChange={(e) => setNormalizeMethod(e.target.value as any)} className="flex-1 rounded border px-2 py-1">
+            <div className="bg-white rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Normalize</label>
+              <div className="flex gap-2">
+                <select
+                  value={normalizeMethod}
+                  onChange={(e) => setNormalizeMethod(e.target.value as any)}
+                  className="flex-1 rounded border px-2 py-1.5"
+                >
                   <option value="min-max">Min-Max</option>
                   <option value="zscore">Z-score</option>
                 </select>
-                <button onClick={doNormalize} className="px-3 py-1 bg-indigo-600 text-white rounded">Apply</button>
+                <button onClick={doNormalize} className="px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                  Apply
+                </button>
               </div>
             </div>
           )}
 
-          <div className="mt-2 space-y-2">
-            <div className="grid grid-cols-1 gap-2">
-              <div className="text-xs text-gray-500">Find & replace (categorical)</div>
+          <div className="bg-white rounded-lg">
+            <div className="text-sm font-medium text-gray-700 mb-2">Find & replace (categorical)</div>
+            <div className="space-y-2">
               <div className="flex gap-2">
-                <input value={replaceFrom} onChange={(e) => setReplaceFrom(e.target.value)} placeholder="from" className="flex-1 rounded border px-2 py-1" />
-                <input value={replaceTo} onChange={(e) => setReplaceTo(e.target.value)} placeholder="to" className="flex-1 rounded border px-2 py-1" />
+                <input
+                  value={replaceFrom}
+                  onChange={(e) => setReplaceFrom(e.target.value)}
+                  placeholder="Find..."
+                  className="flex-1 rounded border px-2 py-1.5"
+                />
+                <input
+                  value={replaceTo}
+                  onChange={(e) => setReplaceTo(e.target.value)}
+                  placeholder="Replace with..."
+                  className="flex-1 rounded border px-2 py-1.5"
+                />
               </div>
               <div className="flex items-center gap-2">
-                <label className="text-sm"><input type="checkbox" checked={replaceIgnoreCase} onChange={(e) => setReplaceIgnoreCase(e.target.checked)} className="mr-2" /> Ignore case</label>
-                <button onClick={doReplace} className="ml-auto px-3 py-1 bg-yellow-500 text-white rounded">Replace</button>
+                <label className="text-sm">
+                  <input
+                    type="checkbox"
+                    checked={replaceIgnoreCase}
+                    onChange={(e) => setReplaceIgnoreCase(e.target.checked)}
+                    className="mr-2"
+                  />
+                  Ignore case
+                </label>
+                <button
+                  onClick={doReplace}
+                  disabled={!replaceFrom}
+                  className="ml-auto px-3 py-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50"
+                >
+                  Replace
+                </button>
               </div>
             </div>
+          </div>
 
-            <div>
-              <button onClick={doDedupe} className="w-full mb-2 px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition">Remove duplicates</button>
-              <button onClick={doDrop} className="w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">Drop column</button>
-            </div>
+          <div className="space-y-2">
+            <button
+              onClick={doDedupe}
+              className="w-full px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition-colors"
+            >
+              Remove duplicates
+            </button>
+            <button
+              onClick={doDrop}
+              className="w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+            >
+              Drop column
+            </button>
           </div>
         </div>
       </div>

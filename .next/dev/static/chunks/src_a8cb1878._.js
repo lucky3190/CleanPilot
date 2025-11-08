@@ -1177,10 +1177,16 @@ const ColumnInspector = ()=>{
                     ],
                     layout: {
                         title: selectedColumn,
-                        height: 320,
                         margin: {
-                            t: 36
-                        }
+                            t: 36,
+                            l: 40,
+                            r: 20,
+                            b: 40
+                        },
+                        paper_bgcolor: 'transparent',
+                        plot_bgcolor: 'transparent',
+                        showlegend: false,
+                        autosize: true
                     }
                 };
             }
@@ -1204,14 +1210,19 @@ const ColumnInspector = ()=>{
                 ],
                 layout: {
                     title: selectedColumn,
-                    height: 320,
                     margin: {
                         t: 36,
+                        l: 40,
+                        r: 20,
                         b: 120
                     },
                     xaxis: {
                         tickangle: -45
-                    }
+                    },
+                    paper_bgcolor: 'transparent',
+                    plot_bgcolor: 'transparent',
+                    showlegend: false,
+                    autosize: true
                 }
             };
         }
@@ -1247,12 +1258,11 @@ const ColumnInspector = ()=>{
         const { dataset: newDs, step } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$transformations$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["dropColumn"])(dataset, selectedColumn);
         commitTransformation(newDs, step);
     };
-    return(// Mobile-first: full-screen panel. On small+ screens (sm >= 640px) show as right slide-over (w-96)
-    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
-        className: "fixed inset-0 p-4 bg-white z-50 overflow-y-auto transition-all duration-200 ease-out sm:inset-auto sm:top-24 sm:right-6 sm:w-96 sm:rounded-lg sm:shadow-lg sm:border",
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
+        className: "fixed bg-white shadow-2xl z-50 transition-all duration-200 ease-out inset-0 p-4 overflow-y-auto sm:inset-auto sm:top-24 sm:right-6 sm:w-96 sm:rounded-lg sm:shadow-lg sm:border lg:w-3/4 lg:max-w-6xl lg:left-1/2 lg:-translate-x-1/2",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-start justify-between",
+                className: "flex items-start justify-between mb-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
@@ -1261,7 +1271,7 @@ const ColumnInspector = ()=>{
                                 children: selectedColumn
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 81,
+                                lineNumber: 102,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1272,73 +1282,58 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 82,
+                                lineNumber: 103,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 80,
+                        lineNumber: 101,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                        "aria-label": "close inspector",
                         onClick: ()=>setSelectedColumn(null),
-                        className: "text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 px-2 py-1",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "sr-only",
-                                children: "Close inspector"
+                        className: "text-gray-500 hover:text-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 p-1",
+                        "aria-label": "Close inspector",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
+                            xmlns: "http://www.w3.org/2000/svg",
+                            className: "h-5 w-5",
+                            viewBox: "0 0 20 20",
+                            fill: "currentColor",
+                            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
+                                fillRule: "evenodd",
+                                d: "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z",
+                                clipRule: "evenodd"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 89,
-                                columnNumber: 11
-                            }, ("TURBOPACK compile-time value", void 0)),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("svg", {
-                                xmlns: "http://www.w3.org/2000/svg",
-                                className: "h-5 w-5",
-                                viewBox: "0 0 20 20",
-                                fill: "currentColor",
-                                "aria-hidden": true,
-                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
-                                    fillRule: "evenodd",
-                                    d: "M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z",
-                                    clipRule: "evenodd"
-                                }, void 0, false, {
-                                    fileName: "[project]/src/components/ColumnInspector.tsx",
-                                    lineNumber: 91,
-                                    columnNumber: 13
-                                }, ("TURBOPACK compile-time value", void 0))
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 90,
-                                columnNumber: 11
+                                lineNumber: 111,
+                                columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
-                        ]
-                    }, void 0, true, {
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/ColumnInspector.tsx",
+                            lineNumber: 110,
+                            columnNumber: 11
+                        }, ("TURBOPACK compile-time value", void 0))
+                    }, void 0, false, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 84,
+                        lineNumber: 105,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 79,
+                lineNumber: 100,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0)),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mt-3",
-                children: chart && // @ts-ignore - Plot's types are heavy; runtime import is used.
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Plot, {
+            chart && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "w-full h-[60vh] bg-white rounded-lg overflow-hidden mb-4",
+                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Plot, {
                     data: chart.data,
-                    layout: {
-                        ...chart.layout,
-                        autosize: true
-                    },
+                    layout: chart.layout,
                     useResizeHandler: true,
                     style: {
                         width: '100%',
-                        height: '320px'
+                        height: '100%'
                     },
                     config: {
                         responsive: true,
@@ -1346,19 +1341,19 @@ const ColumnInspector = ()=>{
                     }
                 }, void 0, false, {
                     fileName: "[project]/src/components/ColumnInspector.tsx",
-                    lineNumber: 99,
+                    lineNumber: 119,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             }, void 0, false, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 96,
-                columnNumber: 7
+                lineNumber: 117,
+                columnNumber: 9
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "mt-3 space-y-2",
+                className: "space-y-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "text-sm text-gray-600",
+                        className: "text-sm text-gray-600 bg-gray-50 p-3 rounded-lg grid grid-cols-3 gap-4",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 children: [
@@ -1367,7 +1362,7 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 111,
+                                lineNumber: 131,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1377,7 +1372,7 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 112,
+                                lineNumber: 132,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1387,130 +1382,139 @@ const ColumnInspector = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 113,
+                                lineNumber: 133,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 110,
+                        lineNumber: 130,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mt-3 space-y-2",
+                        className: "space-y-4",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                className: "block text-xs text-gray-500",
-                                children: "Imputation strategy"
-                            }, void 0, false, {
-                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 117,
-                                columnNumber: 11
-                            }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "flex gap-2",
+                                className: "bg-white rounded-lg",
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
-                                        value: imputeStrategy,
-                                        onChange: (e)=>setImputeStrategy(e.target.value),
-                                        className: "flex-1 rounded border px-2 py-1",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                                        className: "block text-sm font-medium text-gray-700 mb-2",
+                                        children: "Imputation strategy"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                        lineNumber: 138,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "flex gap-2",
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "auto",
-                                                children: "Auto"
-                                            }, void 0, false, {
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                                                value: imputeStrategy,
+                                                onChange: (e)=>setImputeStrategy(e.target.value),
+                                                className: "flex-1 rounded border px-2 py-1.5",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "auto",
+                                                        children: "Auto"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                                        lineNumber: 145,
+                                                        columnNumber: 17
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "mean",
+                                                        children: "Mean"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                                        lineNumber: 146,
+                                                        columnNumber: 17
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "median",
+                                                        children: "Median"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                                        lineNumber: 147,
+                                                        columnNumber: 17
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "mode",
+                                                        children: "Mode"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                                        lineNumber: 148,
+                                                        columnNumber: 17
+                                                    }, ("TURBOPACK compile-time value", void 0)),
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                                                        value: "value",
+                                                        children: "Custom value"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                                        lineNumber: 149,
+                                                        columnNumber: 17
+                                                    }, ("TURBOPACK compile-time value", void 0))
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 124,
+                                                lineNumber: 140,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "mean",
-                                                children: "Mean"
+                                            imputeStrategy === 'value' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                                value: customImputeValue,
+                                                onChange: (e)=>setCustomImputeValue(e.target.value),
+                                                placeholder: "value",
+                                                className: "w-28 rounded border px-2 py-1.5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 125,
-                                                columnNumber: 15
+                                                lineNumber: 152,
+                                                columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "median",
-                                                children: "Median"
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                onClick: doImpute,
+                                                className: "px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700",
+                                                children: "Apply"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 126,
-                                                columnNumber: 15
-                                            }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "mode",
-                                                children: "Mode"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 127,
-                                                columnNumber: 15
-                                            }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
-                                                value: "value",
-                                                children: "Custom value"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 128,
+                                                lineNumber: 159,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 119,
-                                        columnNumber: 13
-                                    }, ("TURBOPACK compile-time value", void 0)),
-                                    imputeStrategy === 'value' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                                        value: customImputeValue,
-                                        onChange: (e)=>setCustomImputeValue(e.target.value),
-                                        placeholder: "value",
-                                        className: "w-28 rounded border px-2 py-1"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 131,
-                                        columnNumber: 15
-                                    }, ("TURBOPACK compile-time value", void 0)),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        onClick: doImpute,
-                                        className: "px-3 py-1 bg-blue-600 text-white rounded",
-                                        children: "Apply"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 138,
+                                        lineNumber: 139,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 118,
+                                lineNumber: 137,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0)),
                             profile.type === 'numeric' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "mt-3",
+                                className: "bg-white rounded-lg",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                        className: "block text-xs text-gray-500",
+                                        className: "block text-sm font-medium text-gray-700 mb-2",
                                         children: "Normalize"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 143,
+                                        lineNumber: 167,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "flex gap-2 mt-1",
+                                        className: "flex gap-2",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
                                                 value: normalizeMethod,
                                                 onChange: (e)=>setNormalizeMethod(e.target.value),
-                                                className: "flex-1 rounded border px-2 py-1",
+                                                className: "flex-1 rounded border px-2 py-1.5",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
                                                         value: "min-max",
                                                         children: "Min-Max"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 146,
+                                                        lineNumber: 174,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
@@ -1518,77 +1522,77 @@ const ColumnInspector = ()=>{
                                                         children: "Z-score"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 147,
+                                                        lineNumber: 175,
                                                         columnNumber: 19
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 145,
+                                                lineNumber: 169,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 onClick: doNormalize,
-                                                className: "px-3 py-1 bg-indigo-600 text-white rounded",
+                                                className: "px-3 py-1.5 bg-indigo-600 text-white rounded hover:bg-indigo-700",
                                                 children: "Apply"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 149,
+                                                lineNumber: 177,
                                                 columnNumber: 17
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 144,
+                                        lineNumber: 168,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 142,
+                                lineNumber: 166,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "mt-2 space-y-2",
+                                className: "bg-white rounded-lg",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "grid grid-cols-1 gap-2",
+                                        className: "text-sm font-medium text-gray-700 mb-2",
+                                        children: "Find & replace (categorical)"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                        lineNumber: 185,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "space-y-2",
                                         children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "text-xs text-gray-500",
-                                                children: "Find & replace (categorical)"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 156,
-                                                columnNumber: 15
-                                            }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: "flex gap-2",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                         value: replaceFrom,
                                                         onChange: (e)=>setReplaceFrom(e.target.value),
-                                                        placeholder: "from",
-                                                        className: "flex-1 rounded border px-2 py-1"
+                                                        placeholder: "Find...",
+                                                        className: "flex-1 rounded border px-2 py-1.5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 158,
+                                                        lineNumber: 188,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                                         value: replaceTo,
                                                         onChange: (e)=>setReplaceTo(e.target.value),
-                                                        placeholder: "to",
-                                                        className: "flex-1 rounded border px-2 py-1"
+                                                        placeholder: "Replace with...",
+                                                        className: "flex-1 rounded border px-2 py-1.5"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 159,
+                                                        lineNumber: 194,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 157,
+                                                lineNumber: 187,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1604,87 +1608,89 @@ const ColumnInspector = ()=>{
                                                                 className: "mr-2"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                                lineNumber: 162,
-                                                                columnNumber: 44
+                                                                lineNumber: 203,
+                                                                columnNumber: 19
                                                             }, ("TURBOPACK compile-time value", void 0)),
-                                                            " Ignore case"
+                                                            "Ignore case"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 162,
+                                                        lineNumber: 202,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         onClick: doReplace,
-                                                        className: "ml-auto px-3 py-1 bg-yellow-500 text-white rounded",
+                                                        disabled: !replaceFrom,
+                                                        className: "ml-auto px-3 py-1.5 bg-yellow-500 text-white rounded hover:bg-yellow-600 disabled:opacity-50",
                                                         children: "Replace"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                        lineNumber: 163,
+                                                        lineNumber: 211,
                                                         columnNumber: 17
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 161,
+                                                lineNumber: 201,
                                                 columnNumber: 15
                                             }, ("TURBOPACK compile-time value", void 0))
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 155,
-                                        columnNumber: 13
-                                    }, ("TURBOPACK compile-time value", void 0)),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        children: [
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                onClick: doDedupe,
-                                                className: "w-full mb-2 px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition",
-                                                children: "Remove duplicates"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 168,
-                                                columnNumber: 15
-                                            }, ("TURBOPACK compile-time value", void 0)),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                onClick: doDrop,
-                                                className: "w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition",
-                                                children: "Drop column"
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/ColumnInspector.tsx",
-                                                lineNumber: 169,
-                                                columnNumber: 15
-                                            }, ("TURBOPACK compile-time value", void 0))
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/ColumnInspector.tsx",
-                                        lineNumber: 167,
+                                        lineNumber: 186,
                                         columnNumber: 13
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                                lineNumber: 154,
+                                lineNumber: 184,
+                                columnNumber: 11
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "space-y-2",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: doDedupe,
+                                        className: "w-full px-3 py-2 bg-red-50 text-red-600 rounded border border-red-100 hover:bg-red-100 transition-colors",
+                                        children: "Remove duplicates"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                        lineNumber: 223,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        onClick: doDrop,
+                                        className: "w-full px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors",
+                                        children: "Drop column"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/ColumnInspector.tsx",
+                                        lineNumber: 229,
+                                        columnNumber: 13
+                                    }, ("TURBOPACK compile-time value", void 0))
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/ColumnInspector.tsx",
+                                lineNumber: 222,
                                 columnNumber: 11
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/ColumnInspector.tsx",
-                        lineNumber: 116,
+                        lineNumber: 136,
                         columnNumber: 9
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/ColumnInspector.tsx",
-                lineNumber: 109,
+                lineNumber: 129,
                 columnNumber: 7
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/ColumnInspector.tsx",
-        lineNumber: 78,
+        lineNumber: 96,
         columnNumber: 5
-    }, ("TURBOPACK compile-time value", void 0)));
+    }, ("TURBOPACK compile-time value", void 0));
 };
 _s(ColumnInspector, "XcD4d7CW0fLV4RAaaB5NYonZKB4=", false, function() {
     return [
